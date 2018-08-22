@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
-import auth from './auth';
+import weather from './weather';
 
 
 const rootReducer = combineReducers({
-  auth
+  weather
 });
 
 export default rootReducer;
