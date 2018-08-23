@@ -11,7 +11,7 @@ const INITIAL_STATE = {
   fetchingLocalWeather: false,
   errorMessage: "",
   weatherInfo: [],
-  localWeather: {}
+  localWeather: []
 };
 
 export default function(state = INITIAL_STATE, action) {

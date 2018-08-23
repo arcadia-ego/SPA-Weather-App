@@ -7,8 +7,8 @@ import {
   FETCHED_WEATHER_LOCAL,
   ERROR
 } from "./types";
+import { API_KEY } from "./config";
 
-//* PUT API KEY IN CONFIG FILE
 
 export const fetchWeather = (city, units) => dispatch => {
   dispatch({ type: FETCHING_WEATHER });
@@ -17,7 +17,7 @@ export const fetchWeather = (city, units) => dispatch => {
 
   axios
     .post(
-      `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&APPID=f151aa6b0a8edfd25aea67421196be0a`
+      `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&APPID=${API_KEY}`
     )
     .then(response => {
       console.log("RESPONSE FROM API", response);
@@ -35,7 +35,7 @@ export const fetchWeatherLocation = (lat, lng, units) => dispatch => {
   console.log("LAT AND LONG", lat, lng);
   axios
     .post(
-      `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=${units}&APPID=f151aa6b0a8edfd25aea67421196be0a`
+      `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=${units}&APPID=${API_KEY}`
     )
     .then(response => {
         console.log("LOCAL WEATHER RESPONSE", response);
