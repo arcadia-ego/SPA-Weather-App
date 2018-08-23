@@ -20,6 +20,7 @@ import "./Landing.css";
 
 class Landing extends Component {
   state = {
+    unitFont: "℉",
     selectedUnits: "imperial",
     selectedCity: "",
     weatherCards: [],
@@ -37,7 +38,10 @@ class Landing extends Component {
       };
       const success = position => {
         this.setState({
-          geo: Object.assign({}, this.state.geo, { lat: position.coords.latitude, lng: position.coords.longitude })
+          geo: Object.assign({}, this.state.geo, {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          })
         });
         this.props.fetchWeatherLocation(
           this.state.geo.lat,
@@ -49,9 +53,7 @@ class Landing extends Component {
     } else {
       alert("Geolocation is not supported");
     }
-
   }
-
   handleClose = () => {
     this.setState({ show: false });
     if (this.state.selectedUnits === "imperial") {
@@ -68,14 +70,29 @@ class Landing extends Component {
     this.setState({ [name]: value });
   };
 
+  onLocalSubmit = (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    this.props.fetchWeatherLocation(
+      this.state.geo.lat,
+      this.state.geo.lng,
+      this.state.selectedUnits
+    );
+  }
+
   onSubmit = event => {
-    if(event){
+    if (event) {
       event.preventDefault();
     }
     let { selectedCity, selectedUnits } = this.state;
     this.props.fetchWeather(selectedCity, selectedUnits);
-    this.props.fetchWeatherLocation(this.state.geo.lat, this.state.geo.lng, this.state.selectedUnits)
-    console.log("submitted")
+    this.props.fetchWeatherLocation(
+      this.state.geo.lat,
+      this.state.geo.lng,
+      this.state.selectedUnits
+    );
+    console.log("submitted");
   };
 
   render() {
@@ -83,6 +100,7 @@ class Landing extends Component {
       console.log("STATE", this.state);
       console.log("PROPS", this.props);
     }
+
     let localDisplay = {
       data: {
         main: {
@@ -132,6 +150,7 @@ class Landing extends Component {
               <FormControl
                 name="selectedCity"
                 type="text"
+                required="true"
                 value={this.state.selectedCity}
                 onChange={this.handleInput}
                 placeholder="Enter desired city."
@@ -158,7 +177,7 @@ class Landing extends Component {
         <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Settings</Modal.Title>
-            <form onSubmit={this.onSubmit}>
+            <form onSubmit={this.onLocalSubmit}>
               <ControlLabel>
                 Unit of measurement (currently {this.state.selectedUnits}
                 ):
