@@ -17,7 +17,7 @@ export const fetchWeather = (city, units) => dispatch => {
 
   axios
     .post(
-      `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&APPID=${API_KEY}`
+      `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=${API_KEY}`
     )
     .then(response => {
       console.log("RESPONSE FROM API", response);

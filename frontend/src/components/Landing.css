@@ -1,3 +1,22 @@
-.spinner{
-    z-index: 200;
+/* .spinner{
+    margin: 0 auto;
+} */
+
+.formWrapper {
+    justify-content: center;
+}
+
+.modalDiag {
+    display: none;
+    width: 302px;
+    height: 302px;
+    margin-top: 15%;
+    margin-left: 40%;
+    margin-right: 40%;
+}
+
+.modalDiag .modal-content{
+    display:none;
+    align-self: center;
+    background:rgba(255, 255, 255, 0);
 }
