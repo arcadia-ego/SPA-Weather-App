@@ -29,7 +29,7 @@ export default function(state = INITIAL_STATE, action) {
     case FETCHING_WEATHER_LOCAL:
       return { ...state, fetchingLocalWeather: true };
     case FETCHED_WEATHER_LOCAL:
-      return { ...state, localWeather: action.payload };
+      return { ...state, localWeather: action.payload, fetchingLocalWeather: false };
     case ERROR:
       //   console.log("ACTION IN ERROR", action);
       console.log("ERROR MESSAGE IN REDUCERS", state);

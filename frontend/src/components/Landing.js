@@ -16,7 +16,9 @@ import {
   Modal,
   Panel
 } from "react-bootstrap";
+import LoadingOverlay from 'react-loading-overlay';
 import "./Landing.css";
+
 
 class Landing extends Component {
   state = {
@@ -24,7 +26,8 @@ class Landing extends Component {
     selectedUnits: "imperial",
     selectedCity: "",
     weatherCards: [],
-    showModal: false,
+    show: false,
+    loadingModal: true,
     geo: {
       lat: "",
       lng: ""
@@ -59,7 +62,7 @@ class Landing extends Component {
     if (this.state.selectedUnits === "imperial") {
       this.setState({ unitFont: "℉" });
     } else this.setState({ unitFont: "℃" });
-    this.onSubmit();
+    this.onLocalSubmit();
   };
   handleShow = () => {
     this.setState({ show: true });
@@ -70,7 +73,7 @@ class Landing extends Component {
     this.setState({ [name]: value });
   };
 
-  onLocalSubmit = (event) => {
+  onLocalSubmit = event => {
     if (event) {
       event.preventDefault();
     }
@@ -79,7 +82,7 @@ class Landing extends Component {
       this.state.geo.lng,
       this.state.selectedUnits
     );
-  }
+  };
 
   onSubmit = event => {
     if (event) {
@@ -87,11 +90,6 @@ class Landing extends Component {
     }
     let { selectedCity, selectedUnits } = this.state;
     this.props.fetchWeather(selectedCity, selectedUnits);
-    this.props.fetchWeatherLocation(
-      this.state.geo.lat,
-      this.state.geo.lng,
-      this.state.selectedUnits
-    );
     console.log("submitted");
   };
 
@@ -118,7 +116,7 @@ class Landing extends Component {
 
     return (
       <Grid fluid>
-        <Navbar>
+        <Navbar fluid>
           <Navbar.Header>
             <Navbar.Brand>
               <div>Weather App!</div>
@@ -133,7 +131,7 @@ class Landing extends Component {
             </Navbar.Brand>
           </Navbar.Header>
           <Nav bsSize="large" pullRight>
-            <NavItem bsSize="large" eventKey={1} href="#">
+            <NavItem bsSize="large" eventKey={1}>
               <Button onClick={this.handleShow}>
                 <Glyphicon glyph="cog" />
               </Button>
@@ -206,6 +204,9 @@ class Landing extends Component {
               </FormControl>
             </form>
           </Modal.Header>
+        </Modal>
+        <Modal show={this.state.loadingModal}>
+          <i className="spinner" class="fa fa-spinner fa-spin" style={{fontSize:"40rem", color: "blue",}}></i>
         </Modal>
       </Grid>
     );
