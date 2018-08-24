@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { withRouter } from "react-router";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { fetchWeather, fetchWeatherLocation } from "../actions/index";
+import {
+  fetchWeather,
+  fetchWeatherLocation,
+  closeErrorModal
+} from "../actions/index";
 import {
   Button,
   Navbar,
@@ -38,7 +42,7 @@ class Landing extends Component {
   componentDidMount() {
     if (navigator.geolocation) {
       const geoErr = error => {
-        alert("Couldn't locate you!");
+        alert("Couldn't locate you! Please ensure you have location enabled.");
       };
       const success = position => {
         this.setState({
@@ -59,17 +63,22 @@ class Landing extends Component {
     }
   }
 
+  handleModal = () => {
+    this.setState(prev => ({ showError: !prev.showError }));
+    this.props.closeErrorModal();
+    
+  };
+
   handleClose = () => {
     this.setState({ show: false });
-    this.setState({ showError: false });
   };
 
   handleCloseSettings = () => {
-    this.setState({ show: false });
+    this.setState(prev => ({ show: !prev.show }));
     if (this.state.selectedUnits === "imperial") {
       this.setState({ unitFont: "℉" });
     } else this.setState({ unitFont: "℃" });
-    this.onLocalSubmit();
+    this.props.closeErrorModal();
   };
 
   handleShow = () => {
@@ -79,22 +88,11 @@ class Landing extends Component {
   handleInput = event => {
     const { value, name } = event.target;
     this.setState({ [name]: value });
-  };
-
-  onLocalSubmit = event => {
-    if (event) {
-      event.preventDefault();
-    }
-    this.props.fetchWeatherLocation(
-      this.state.geo.lat,
-      this.state.geo.lng,
-      this.state.selectedUnits
-    );
+    console.log("STATE", this.state)
   };
 
   removeItem = (arr, item) => {
     arr.splice(item, 1);
-    console.log("STATE ARR VAR", this.state.propsArrVar);
     this.setState({ propsArrVar: arr });
   };
 
@@ -104,12 +102,10 @@ class Landing extends Component {
     }
     let { selectedCity, selectedUnits } = this.state;
     this.props.fetchWeather(selectedCity, selectedUnits);
-    // if (this.props.errorMessage.response) {
-    //   this.setState({ showError: true });
-    // } else this.setState({ showError: false });
     console.log("submitted");
   };
 
+  //converts the displayed temperatures of cities depending on user settings.
   convert = (degree, temp) => {
     if (degree === "℃") {
       return Math.round((temp = ((temp - 32) * 5) / 9));
@@ -119,11 +115,8 @@ class Landing extends Component {
   };
 
   render() {
-    {
-      console.log("STATE", this.state);
-      console.log("PROPS", this.props);
-    }
 
+    //conditional rendering **
     let localDisplay = {
       data: {
         main: {
@@ -138,40 +131,24 @@ class Landing extends Component {
     if (this.props.localWeather.data) {
       localDisplay = this.props.localWeather;
     }
+    // **
 
     if (this.state.propsArrVar !== this.props.weatherCards) {
-      // propsArrVar = [...this.props.weatherCards];
       this.setState({ propsArrVar: this.props.weatherCards });
-    }
-
-    // let displayBool = false;
-
-    let showError = false;
-    let errorClosed = false;
-
-    const errorClose = () => {
-      showError = false;
-      errorClosed = true;
-
-    }
-
-    if(this.props.errorMessage.response && !errorClosed){
-      showError = true;
     }
 
     return (
       <Grid fluid>
         <Row>
           <Navbar>
-            <Navbar.Header pullLeft fluid>
+            <Navbar.Header>
               <Navbar.Brand>
                 <div>Weather App!</div>
               </Navbar.Brand>
             </Navbar.Header>
             <div
               style={{
-                paddingTop: "10px",
-                marginTop: "10px",
+                marginTop: "50px",
                 marginBot: "10px",
                 color: "white",
                 fontSize: "18px"
@@ -180,7 +157,7 @@ class Landing extends Component {
               It's currently{" "}
               <span style={{ fontWeight: "bold" }}>
                 {console.log("PROPS LOCALWEATHER", this.props.localWeather)}
-                {localDisplay.data.main.temp}
+                {this.convert(this.state.unitFont, localDisplay.data.main.temp)}
                 {this.state.unitFont} in {localDisplay.data.name},
                 {localDisplay.data.sys.country}
               </span>
@@ -217,13 +194,11 @@ class Landing extends Component {
           </Col>
           <Col xs={4} md={4} />
         </Row>
-        <div>
+        <div className="panelContainer">
           {console.log("PROPS WEATHERCARDS", this.props.weatherCards)}
           {this.state.propsArrVar.map((card, key) => {
-            // this.convert(this.state.unitFont, card.main.temp);
-
             return (
-              <Panel key={key}>
+              <Panel bsStyle="info"className="weatherPanel" key={key}>
                 <Panel.Heading>
                   {card.name}, {card.sys.country}
                 </Panel.Heading>
@@ -272,7 +247,7 @@ class Landing extends Component {
                 <option
                   name="selectedUnits"
                   value="metric"
-                  onChange={this.handleInput}
+                  onChange={this.onLocalSubmit}
                 >
                   Celsius
                 </option>
@@ -281,12 +256,11 @@ class Landing extends Component {
           </Modal.Header>
         </Modal>
         <Modal show={this.props.fetchingWeather} dialogClassName="modalDiag" />
-        <Modal show={showError} onHide={this.handleClose}>
+        <Modal show={this.props.showError} onHide={this.handleModal}>
           <Modal.Header closeButton>
             <div>Error</div>
           </Modal.Header>
           <Modal.Body>
-            {" "}
             We're sorry, we couldn't find that particular city. Please ensure
             you entered only the city name.
           </Modal.Body>
@@ -299,6 +273,7 @@ class Landing extends Component {
 const mapStateToProps = state => {
   console.log("STATE IN MAPSTATE", state);
   return {
+    showError: state.weather.showError,
     errorMessage: state.weather.errorMessage,
     weatherCards: state.weather.weatherInfo,
     localWeather: state.weather.localWeather,
@@ -310,6 +285,6 @@ const mapStateToProps = state => {
 export default compose(
   connect(
     mapStateToProps,
-    { fetchWeather, fetchWeatherLocation }
+    { fetchWeather, fetchWeatherLocation, closeErrorModal }
   )
 )(withRouter(Landing));

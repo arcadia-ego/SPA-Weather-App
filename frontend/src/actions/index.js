@@ -5,6 +5,7 @@ import {
   FETCHED_WEATHER,
   FETCHING_WEATHER_LOCAL,
   FETCHED_WEATHER_LOCAL,
+  CLOSE_ERROR,
   ERROR
 } from "./types";
 import { API_KEY } from "./config";
@@ -17,7 +18,7 @@ export const fetchWeather = (city, units) => dispatch => {
 
   axios
     .post(
-      `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=${API_KEY}`
+      `https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=${API_KEY}`
     )
     .then(response => {
       console.log("RESPONSE FROM API", response);
@@ -26,7 +27,7 @@ export const fetchWeather = (city, units) => dispatch => {
 
     .catch(err => {
       console.log("ERROR", err);
-      dispatch({ type: ERROR, errorMessage: err });
+      dispatch({ type: ERROR, errorMessage: err, showError: true });
     });
 };
 
@@ -35,7 +36,7 @@ export const fetchWeatherLocation = (lat, lng, units) => dispatch => {
   console.log("LAT AND LONG", lat, lng);
   axios
     .post(
-      `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=${units}&APPID=${API_KEY}`
+      `https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=${units}&APPID=${API_KEY}`
     )
     .then(response => {
         console.log("LOCAL WEATHER RESPONSE", response);
@@ -43,6 +44,9 @@ export const fetchWeatherLocation = (lat, lng, units) => dispatch => {
     })
     .catch(err => {
       console.log("ERROR", err);
-      dispatch({ type: ERROR, errorMessage: err });
+      dispatch({ type: ERROR, errorMessage: err, showError: true });
     });
 };
+
+
+export const closeErrorModal = () => ({ type: CLOSE_ERROR, errorMessage: null, showError: false });

@@ -3,13 +3,15 @@ import {
   FETCHED_WEATHER,
   FETCHING_WEATHER_LOCAL,
   FETCHED_WEATHER_LOCAL,
+  CLOSE_ERROR,
   ERROR
 } from "../actions/types";
 
 const INITIAL_STATE = {
   fetchingWeather: false,
   fetchingLocalWeather: false,
-  errorMessage: false,
+  errorMessage: null,
+  showError: false,
   weatherInfo: [],
   localWeather: []
 };
@@ -34,7 +36,15 @@ export default function(state = INITIAL_STATE, action) {
         ...state,
         localWeather: action.payload,
         fetchingLocalWeather: false,
-        errorMessage: false
+        errorMessage: false,
+        showError: false
+      };
+    case CLOSE_ERROR:
+      return {
+        ...state,
+        fetchingLocalWeather: false,
+        fetchingWeather: false,
+        showError: false
       };
     case ERROR:
       //   console.log("ACTION IN ERROR", action);
@@ -43,7 +53,8 @@ export default function(state = INITIAL_STATE, action) {
         ...state,
         errorMessage: action.errorMessage,
         fetchingLocalWeather: false,
-        fetchingWeather: false
+        fetchingWeather: false,
+        showError: true
       };
     default:
       return state;
