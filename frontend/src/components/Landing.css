@@ -2,6 +2,10 @@
     margin: 0 auto;
 } */
 
+.container{
+    font-size: 2rem;
+}
+
 .formWrapper {
     justify-content: center;
 }
@@ -22,6 +26,7 @@
 }
 .weatherPanel{
     margin: 5px;
+    width: 350px;
 }
 
 .panelContainer{
@@ -36,5 +41,8 @@
 @media(max-width: 900px){
     .panelContainer{
         flex-direction: column;
+    }
+    .weatherPanel{
+        width: 100%;
     }
 }

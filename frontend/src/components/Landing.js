@@ -21,8 +21,11 @@ import {
   Modal,
   Panel,
   Row,
-  Col
+  Col,
+  HelpBlock
 } from "react-bootstrap";
+
+import { FaSun, FaCloud } from "react-icons/fa";
 import "./Landing.css";
 
 class Landing extends Component {
@@ -88,7 +91,6 @@ class Landing extends Component {
   handleInput = event => {
     const { value, name } = event.target;
     this.setState({ [name]: value });
-    console.log("STATE", this.state);
   };
 
   removeItem = (arr, item) => {
@@ -107,7 +109,6 @@ class Landing extends Component {
     }
     let { selectedCity, selectedUnits } = this.state;
     this.props.fetchWeather(selectedCity, selectedUnits);
-    console.log("submitted");
   };
 
   //converts the displayed temperatures of cities depending on user settings.
@@ -120,29 +121,29 @@ class Landing extends Component {
   };
 
   render() {
-    //conditional rendering **
+    //conditional rendering ********************
     let localDisplay = {
       data: {
         main: {
-          temp: "Loading..."
+          temp: ""
         },
         name: "Loading...",
         sys: {
-          country: "Loading..."
+          country: ""
         }
       }
     };
     if (this.props.localWeather.data) {
       localDisplay = this.props.localWeather;
     }
-    // **
 
     if (this.state.propsArrVar !== this.props.weatherCards) {
       this.setState({ propsArrVar: this.props.weatherCards });
     }
+    // ********************
 
     return (
-      <Grid fluid>
+      <Grid className="container" fluid>
         <Row>
           <Navbar>
             <Navbar.Header>
@@ -160,7 +161,6 @@ class Landing extends Component {
             >
               It's currently{" "}
               <span style={{ fontWeight: "bold" }}>
-                {console.log("PROPS LOCALWEATHER", this.props.localWeather)}
                 {this.convert(this.state.unitFont, localDisplay.data.main.temp)}
                 {this.state.unitFont} in {localDisplay.data.name},
                 {localDisplay.data.sys.country}
@@ -193,20 +193,30 @@ class Landing extends Component {
                   placeholder="Paris, FR"
                 />
                 {/* <FormControl.Feedback /> */}
+                <HelpBlock>
+                  Examples: <br /> Paris <br /> Paris, FR
+                </HelpBlock>
               </FormGroup>
             </form>
           </Col>
           <Col xs={4} md={4} />
         </Row>
         <div className="panelContainer">
-          {console.log("PROPS WEATHERCARDS", this.props.weatherCards)}
           {this.state.propsArrVar.map((card, key) => {
+            //weather icon conditional **
+            let weatherIcon;
+            if (card.weather[0].description.includes("clear")) {
+              weatherIcon = <FaSun size="10rem" />;
+            } else weatherIcon = <FaCloud size="10rem" />;
+            //**
+
             return (
               <Panel bsStyle="info" className="weatherPanel" key={key}>
                 <Panel.Heading>
                   {card.name}, {card.sys.country}
                 </Panel.Heading>
                 <Panel.Body>
+                  <h1>{weatherIcon}</h1>
                   <div>
                     Temperature:{" "}
                     {this.convert(this.state.unitFont, card.main.temp)}{" "}
@@ -276,7 +286,6 @@ class Landing extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log("STATE IN MAPSTATE", state);
   return {
     showError: state.weather.showError,
     errorMessage: state.weather.errorMessage,

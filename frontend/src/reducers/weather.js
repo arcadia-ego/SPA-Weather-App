@@ -21,8 +21,6 @@ export default function(state = INITIAL_STATE, action) {
     case FETCHING_WEATHER:
       return { ...state, fetchingWeather: true, errorMessage: false };
     case FETCHED_WEATHER:
-      console.log("ACTION PAYLOAD WHEN FETCHED", action.payload.data);
-      console.log("STATE IN REDUCER", state);
       return {
         ...state,
         weatherInfo: [...state.weatherInfo, action.payload.data],
@@ -47,8 +45,6 @@ export default function(state = INITIAL_STATE, action) {
         showError: false
       };
     case ERROR:
-      //   console.log("ACTION IN ERROR", action);
-      console.log("ERROR MESSAGE IN REDUCERS", state);
       return {
         ...state,
         errorMessage: action.errorMessage,
