@@ -1,7 +1,7 @@
 # Weather Application with React/Redux
 
 ## Installation
-To install locally:
+To install locally:  
 1.`git clone https://github.com/arcadia-ego/SPA-Weather-App.git`  
 2. `cd` to folder, `yarn` or `npm i` to install.  
 3. `yarn start` or `npm start` to run locally.  
