@@ -7,6 +7,7 @@ import {
   fetchWeatherLocation,
   closeErrorModal
 } from "../actions/index";
+
 import {
   Button,
   Navbar,
@@ -66,7 +67,6 @@ class Landing extends Component {
   handleModal = () => {
     this.setState(prev => ({ showError: !prev.showError }));
     this.props.closeErrorModal();
-    
   };
 
   handleClose = () => {
@@ -88,12 +88,17 @@ class Landing extends Component {
   handleInput = event => {
     const { value, name } = event.target;
     this.setState({ [name]: value });
-    console.log("STATE", this.state)
+    console.log("STATE", this.state);
   };
 
   removeItem = (arr, item) => {
-    arr.splice(item, 1);
-    this.setState({ propsArrVar: arr });
+    const response = window.confirm(
+      `Are you sure you want to delete that city?`
+    );
+    if (response) {
+      arr.splice(item, 1);
+      this.setState({ propsArrVar: arr });
+    } else return;
   };
 
   onSubmit = event => {
@@ -115,7 +120,6 @@ class Landing extends Component {
   };
 
   render() {
-
     //conditional rendering **
     let localDisplay = {
       data: {
@@ -164,7 +168,7 @@ class Landing extends Component {
             </div>
             <Nav pullRight>
               <NavItem eventKey={1}>
-                <Button onClick={this.handleShow}>
+                <Button bsStyle="info" onClick={this.handleShow}>
                   <Glyphicon glyph="cog" />
                 </Button>
               </NavItem>
@@ -177,8 +181,8 @@ class Landing extends Component {
             <form onSubmit={this.onSubmit}>
               <FormGroup controlId="formBasicText">
                 <ControlLabel>
-                  Please enter the name of the city you would like the current
-                  weather for.
+                  Please enter the name of the city, or city and country
+                  abbreviation you would like the current weather for.
                 </ControlLabel>
                 <FormControl
                   name="selectedCity"
@@ -186,7 +190,7 @@ class Landing extends Component {
                   required="true"
                   value={this.state.selectedCity}
                   onChange={this.handleInput}
-                  placeholder="Enter desired city."
+                  placeholder="Paris, FR"
                 />
                 {/* <FormControl.Feedback /> */}
               </FormGroup>
@@ -198,7 +202,7 @@ class Landing extends Component {
           {console.log("PROPS WEATHERCARDS", this.props.weatherCards)}
           {this.state.propsArrVar.map((card, key) => {
             return (
-              <Panel bsStyle="info"className="weatherPanel" key={key}>
+              <Panel bsStyle="info" className="weatherPanel" key={key}>
                 <Panel.Heading>
                   {card.name}, {card.sys.country}
                 </Panel.Heading>
@@ -212,6 +216,7 @@ class Landing extends Component {
                     Likely to be experiencing (a) {card.weather[0].description}.
                   </div>
                   <Button
+                    bsStyle="danger"
                     style={{ marginTop: "10px" }}
                     onClick={() => this.removeItem(this.state.propsArrVar, key)}
                   >
@@ -262,7 +267,7 @@ class Landing extends Component {
           </Modal.Header>
           <Modal.Body>
             We're sorry, we couldn't find that particular city. Please ensure
-            you entered only the city name.
+            you spelled it correctly.
           </Modal.Body>
         </Modal>
       </Grid>

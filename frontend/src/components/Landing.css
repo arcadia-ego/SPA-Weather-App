@@ -29,6 +29,10 @@
     flex-flow: row wrap;
 }
 
+.deleteButton:hover{
+    color: red;
+}
+
 @media(max-width: 900px){
     .panelContainer{
         flex-direction: column;
